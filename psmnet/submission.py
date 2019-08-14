@@ -24,9 +24,9 @@ from models import *
 parser = argparse.ArgumentParser(description='PSMNet')
 parser.add_argument('--KITTI', default='2015',
                     help='KITTI version')
-parser.add_argument('--datapath', default='/scratch/datasets/kitti2015/testing/',
+parser.add_argument('--datapath', default='/mnt/storage/minghanz_data/KITTI/object/testing/',
                     help='select model')
-parser.add_argument('--loadmodel', default=None,
+parser.add_argument('--loadmodel', default='./psmnet/kitti_3d/finetune_300.tar',
                     help='loading model')
 parser.add_argument('--model', default='stackhourglass',
                     help='select model')
@@ -36,7 +36,7 @@ parser.add_argument('--no-cuda', action='store_true', default=False,
                     help='enables CUDA training')
 parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
-parser.add_argument('--save_path', type=str, default='finetune_1000', metavar='S',
+parser.add_argument('--save_path', type=str, default='/mnt/storage/minghanz_data/KITTI/object/testing/predict_disparity', metavar='S',
                     help='path to save the predict')
 parser.add_argument('--save_figure', action='store_true', help='if true, save the numpy file, not the png file')
 args = parser.parse_args()

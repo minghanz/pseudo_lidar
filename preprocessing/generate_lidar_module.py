@@ -1,0 +1,30 @@
+import numpy as np
+
+
+class PclGenerator(object):
+    def __init__(self, params):
+        self.args = params
+
+    def run(self, calib, disp):
+        disp[disp < 0] = 0
+        baseline = 0.54
+        mask = disp > 0
+        depth = calib.f_u * baseline / (disp + 1. - mask)
+        rows, cols = depth.shape
+        c, r = np.meshgrid(np.arange(cols), np.arange(rows))
+        points = np.stack([c, r, depth])
+        points = points.reshape((3, -1))
+        points = points.T
+        points = points[mask.reshape(-1)]
+        cloud = calib.project_image_to_velo(points)
+        valid = (cloud[:, 0] >= 0) & (cloud[:, 2] <self.args.max_high)
+        return cloud[valid]
+
+
+
+def main():
+    generate_lidar_node = PclGenerator()
+    generate_lidar_node.run_from_file()
+
+if __name__ == '__main__':
+    main()
