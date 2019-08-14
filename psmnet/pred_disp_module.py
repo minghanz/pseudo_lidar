@@ -92,6 +92,8 @@ class DisparityNet():
         # postprocess
         top_pad   = 384 - imgL_o.shape[0]
         left_pad  = 1248 - imgL_o.shape[1]
-        img = pred_disp[top_pad:,:-left_pad]
-        return img
+        if left_pad != 0:
+            img = pred_disp[top_pad:,:-left_pad]
+            return img
+        return pred_disp
 

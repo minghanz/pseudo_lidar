@@ -45,12 +45,12 @@ class Calibration(object):
 
     def __init__(self, K_left):
 
-        calibs = self.read_calib_file(calib_filepath)
+        # calibs = self.read_calib_file(calib_filepath)
         # Projection matrix from rect camera coord to image2 coord
         # self.P = calibs['P2']
         # self.P = np.reshape(self.P, [3, 4])
         self.P = np.zeros([3, 4])
-        self.P[:,:3] = K_left
+        self.P[:,:3] = np.reshape(K_left, (3,3))
         # Rigid transform from Velodyne coord to reference camera coord
         # self.V2C = calibs['Tr_velo_to_cam']
         # self.V2C = np.reshape(self.V2C, [3, 4])
