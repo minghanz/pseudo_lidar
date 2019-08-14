@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # Created by Minghan
+import open3d as o3d
 import skimage
 import skimage.io
 import numpy as np
@@ -10,6 +11,7 @@ from preprocessing.generate_lidar_module import PclGenerator
 
 import argparse
 import os
+import cv2
 
 def init_args(descp='PSMNet'):
     if descp == "PSMNet":
@@ -65,12 +67,23 @@ class detection3dPseudeLidarNode(object):
             os.makedirs(self.args_disp.save_path)
 
     
+        # vis = o3d.visualization.Visualizer()
+        # vis.create_window()
+        # pcd = o3d.geometry.PointCloud()
+        # pcd.points = o3d.utility.Vector3dVector(np.ones([100,3]))
+        # vis.add_geometry(pcd)
+
         for inx in range(len(test_left_img)):
             ################ part 1 #######################
             imgL_o = (skimage.io.imread(test_left_img[inx]).astype('float32'))
             imgR_o = (skimage.io.imread(test_right_img[inx]).astype('float32'))
     
             img = self.disp_pred_net.run(imgL_o, imgR_o)
+
+            #####visualize
+            cv2.imshow('disparity image', img.astype(np.uint8))
+            cv2.waitKey(1)
+            ##################
 
             # # file output
             # print(test_left_img[inx].split('/')[-1])
@@ -85,16 +98,34 @@ class detection3dPseudeLidarNode(object):
             calib = kitti_util.Calibration(calib_file)
 
             img = (img*256).astype(np.uint16)/256.
-            lidar = self.pcl_generator.run(calib, img)
+            lidar, valid_idx = self.pcl_generator.run(calib, img)
 
             # pad 1 in the indensity dimension
-            lidar = np.concatenate([lidar, np.ones((lidar.shape[0], 1))], 1)
-            lidar = lidar.astype(np.float32)
-            lidar.tofile('{}/{}.bin'.format(self.args_gen_lidar.save_dir, predix))
+            # lidar = np.concatenate([lidar, np.ones((lidar.shape[0], 1))], 1)
+            lidar = lidar.astype(np.float32) # from float64 to float32
+            # lidar.tofile('{}/{}.bin'.format(self.args_gen_lidar.save_dir, predix))
             print('Finish Depth {}'.format(predix))
 
+            ##### visualize
+            # pcd.points = o3d.utility.Vector3dVector(lidar)
+
+            imgL_o_flat = imgL_o.reshape([-1,3])
+            imgL_o_valid = imgL_o_flat[valid_idx]/255.
+            # print(imgL_o_valid)
+            # print(imgL_o_valid.shape)
+            # print(lidar.shape)
+            pcd = o3d.geometry.PointCloud()
+            pcd.points = o3d.utility.Vector3dVector(lidar)
+            pcd.colors = o3d.utility.Vector3dVector(imgL_o_valid)
+            # pcd.paint_uniform_color([1, 0.706, 0])
+
+            o3d.visualization.draw_geometries([pcd])
+            # vis.update_geometry()
+            # vis.poll_events()
+            # vis.update_renderer()
+
             ##################### part 3 ############################
-            
+        vis.destroy_window()
       
 def main():
     detection_node = detection3dPseudeLidarNode()
