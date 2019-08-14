@@ -5,9 +5,9 @@ class PclGenerator(object):
     def __init__(self, params):
         self.args = params
 
-    def run(self, calib, disp):
+    def run(self, calib, disp, baseline=0.54):
+        # baseline=0.54 is for KITTI (https://github.com/yanii/kitti-pcl/blob/master/KITTI_README.TXT)
         disp[disp < 0] = 0
-        baseline = 0.54
         mask = disp > 0
         depth = calib.f_u * baseline / (disp + 1. - mask)
         rows, cols = depth.shape
