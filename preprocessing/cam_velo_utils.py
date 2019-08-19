@@ -55,8 +55,9 @@ class Calibration(object):
         # self.V2C = calibs['Tr_velo_to_cam']
         # self.V2C = np.reshape(self.V2C, [3, 4])
         # self.C2V = inverse_rigid_trans(self.V2C)
-        self.V2C = np.zeros([3, 4])
-        self.V2C[:,:3] = np.identity(3)
+        # self.V2C = np.zeros([3, 4])
+        # self.V2C[:,:3] = np.identity(3)
+        self.V2C = np.array([[0, -1, 0, 0], [0, 0, -1, 0], [1, 0, 0, 0]] )
         self.C2V = inverse_rigid_trans(self.V2C)
         # Rotation from reference camera coord to rect camera coord
         # self.R0 = calibs['R0_rect']

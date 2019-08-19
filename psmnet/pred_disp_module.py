@@ -87,7 +87,7 @@ class DisparityNet():
         # inference
         start_time = time.time()
         pred_disp = self.test(imgL,imgR)
-        print('time = %.2f' %(time.time() - start_time))
+        print('time for disparity prediction = %.2f' %(time.time() - start_time))
 
         # postprocess
         top_pad   = 384 - imgL_o.shape[0]

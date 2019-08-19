@@ -18,6 +18,7 @@ class PclGenerator(object):
         points = points[mask.reshape(-1)]
         cloud = calib.project_image_to_velo(points)
         valid = (cloud[:, 0] >= 0) & (cloud[:, 2] < self.args.max_high)
+        # valid = (cloud[:, 0] > 0)
         # valid = np.ones(cloud.shape[0]) == 1
         
         return cloud[valid], valid
